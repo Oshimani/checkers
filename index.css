@@ -1,0 +1,62 @@
+
+:root{
+    /* Board colors */
+    --board-bg-w: rgb(230,230,230);
+    --board-bg-b: rgb(100,100,100);
+
+    /* Piece colors */
+    --piece-w: rgb(240,240,240);
+    --piece-border-w: rgb(190,190,190);
+    --piece-b: rgb(0,0,0);
+    --piece-border-b: rgb(50,50,50);
+}
+
+#board .row {
+    flex-wrap: nowrap;
+    margin: 0;
+}
+
+#board .row>* {
+    padding-top: calc(var(--bs-gutter-x) * .5);
+    padding-bottom: calc(var(--bs-gutter-x) * .5);
+}
+
+.square {
+    width: 100px;
+    height: 100px;
+}
+
+.row:nth-child(even) .square:nth-child(even) {
+    background-color: var(--board-bg-w);
+}
+
+.row:nth-child(even) .square:nth-child(odd) {
+    background-color: var(--board-bg-b);
+}
+
+.row:nth-child(odd) .square:nth-child(even) {
+    background-color: var(--board-bg-b);
+}
+
+.row:nth-child(odd) .square:nth-child(odd) {
+    background-color: var(--board-bg-w);
+}
+
+.square div.piece {
+    border: 5px solid;
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    
+    cursor: pointer;
+}
+
+.square.w div.piece {
+    background-color: var(--piece-w);
+    border-color: var(--piece-border-w);
+}
+
+.square.b div.piece {
+    background-color: var(--piece-b);
+    border-color: var(--piece-border-b);
+}
