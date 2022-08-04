@@ -205,7 +205,7 @@ export class Board {
                 square.setAttribute("data-x", x)
                 square.setAttribute("data-y", y)
                 // debug
-                square.innerText = "X: " + x + " Y: " + y
+                square.innerText = `${x}/${y}`
 
                 // PLACE PIECE
                 if (this.getPiece(x, y) !== null) {

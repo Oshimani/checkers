@@ -11,6 +11,13 @@
 .square {
     width: 100px;
     height: 100px;
+
+    /* DEBUG */
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 0px;
+    color: red;
+    /* DEBUG END */
 }
 
 .row:nth-child(even) .square:nth-child(even) {
@@ -62,6 +69,6 @@
     border-color: var(--move-border-kill)
 }
 
-.square.potential-kill .piece{
+.square.potential-kill .piece {
     border-color: var(--piece-kill) !important;
 }
