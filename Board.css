@@ -61,3 +61,7 @@
 .square.valid-move.valid-move-kill {
     border-color: var(--move-border-kill)
 }
+
+.square.potential-kill .piece{
+    border-color: var(--piece-kill) !important;
+}

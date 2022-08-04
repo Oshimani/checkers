@@ -1,5 +1,5 @@
 export class Player {
-    
+
     color = ""
     name = ""
     pieces = 0
@@ -17,19 +17,21 @@ export class Player {
         this.pieces = pieces
     }
 
-    render() {
+    render(currentPlayer) {
         let el = document.querySelector("#players #" + this.color)
         el.innerHTML = ""
         let player = document.createElement("div")
         player.classList.add("player")
+        if (currentPlayer === this)
+            player.classList.add("current-player")
         player.classList.add(this.getColor())
         player.innerHTML = this._renderText()
         el.appendChild(player)
     }
 
-    _renderText(){
-        return(
-`
+    _renderText() {
+        return (
+            `
 <h1>${this.name}</h1>
 <p>Pieces left: ${this.pieces}</p>
 `

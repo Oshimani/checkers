@@ -1,3 +1,4 @@
+import { game } from "./index.js"
 import { Piece } from "./Piece.js"
 
 export class Board {
@@ -11,10 +12,9 @@ export class Board {
 
         // Add Listeners to board
         document.getElementById("board").addEventListener("pointerup", (e) => {
-            document.querySelectorAll("#board .valid-move")
+            document.querySelectorAll("#board .valid-move, #board .potential-kill")
                 .forEach(square => {
-                    square.classList.remove("valid-move")
-                    square.classList.remove("valid-move-move", "valid-move-kill")
+                    square.classList.remove("valid-move", "valid-move-move", "valid-move-kill", "potential-kill")
                 })
         })
     }
@@ -29,7 +29,6 @@ export class Board {
     }
 
     initializeBlackPieces() {
-        this.setPiece(3,4, new Piece("black"))
         this.setPiece(1, 0, new Piece("black"))
         this.setPiece(3, 0, new Piece("black"))
         this.setPiece(5, 0, new Piece("black"))
@@ -106,14 +105,21 @@ export class Board {
             let newX = x + direction.x
             let newY = y + direction.y
             if (this.isInBounds(newX, newY)) {
-                // is empty or enemy
+                // is empty
                 if (this.getPiece(newX, newY) === null) {
                     validMoves.push({ x: newX, y: newY, type: "move" })
                     continue
                 }
-                else if (this.getPiece(newX, newY).getColor() !== piece.getColor()) {
-                    validMoves.push({ x: newX, y: newY, type: "kill" })
-                    continue
+                // Single kill
+                if (this.getPiece(newX, newY).getColor() !== piece.getColor()) {
+                    // check tile behind
+                    let behindX = newX + direction.x
+                    let behindY = newY + direction.y
+
+                    if (this.isInBounds(behindX, behindY) && this.getPiece(behindX, behindY) === null) {
+                        validMoves.push({ x: behindX, y: behindY, type: "kill", killAt: { x: newX, y: newY } })
+                        continue
+                    }
                 }
             }
         }
@@ -123,17 +129,68 @@ export class Board {
     showValidMoves(x, y, piece) {
         let validMoves = this.getValidMoves(x, y, piece)
         for (let i = 0; i < validMoves.length; i++) {
-            let square = document.querySelector(`[data-x="${validMoves[i].x}"][data-y="${validMoves[i].y}"]`)
+            if (validMoves[i].type === "kill") {
+                let killedSquare = document.querySelector(`.square[data-x="${validMoves[i].killAt.x}"][data-y="${validMoves[i].killAt.y}"]`)
+                killedSquare.classList.add("potential-kill")
+            }
+
+            let square = document.querySelector(`.square[data-x="${validMoves[i].x}"][data-y="${validMoves[i].y}"]`)
             square.classList.add("valid-move")
             square.classList.add("valid-move-" + validMoves[i].type)
+
+
+            // handle drop
+            square.addEventListener("drop", (e) => {
+                e.preventDefault()
+                console.log("DROP EVENT");
+                // remove highlighting of viable moves
+                document.querySelectorAll("#board .valid-move")
+                    .forEach(square => {
+                        square.classList.remove("valid-move")
+                        square.classList.remove("valid-move-move", "valid-move-kill")
+                    })
+
+                e.dataTransfer.dropEffect = "move";
+                let from = JSON.parse(e.dataTransfer.getData('from'))
+                this.movePiece(from.x, from.y, validMoves[i])
+            })
+            // alow drop
+            square.addEventListener("dragover", (e) => {
+                e.preventDefault()
+                e.dataTransfer.dropEffect = "move";
+            })
         }
     }
 
+    movePiece(x, y, move) {
+        let piece = this.getPiece(x, y)
+        this.setPiece(move.x, move.y, piece)
+        this.setPiece(x, y, null)
+        if (move.type === "kill") {
+            this.setPiece(move.killAt.x, move.killAt.y, null)
+        }
+        this.render()
+        game.endTurn()
+    }
+
     addListeners(piece, element) {
+
+        let pos = {
+            x: Number(element.getAttribute('data-x')),
+            y: Number(element.getAttribute('data-y'))
+        }
+
         element.addEventListener("pointerdown", () => {
             console.log("My color is: " + piece.getColor())
-            this.showValidMoves(Number(element.getAttribute('data-x')), Number(element.getAttribute('data-y')), piece)
+            this.showValidMoves(pos.x, pos.y, piece)
         })
+        element.addEventListener("dragstart", (e) => {
+            console.log("DRAG START");
+            // e.dataTransfer.effectAllowed = "move";
+            // e.dataTransfer.dropEffect = "move";
+            e.dataTransfer.setData('from', JSON.stringify(pos))
+        })
+
     }
 
     render() {
@@ -152,16 +209,12 @@ export class Board {
 
                 // PLACE PIECE
                 if (this.getPiece(x, y) !== null) {
-                    square.classList.add(this.getPiece(x, y).getColor())
-                    let piece = document.createElement("div")
-                    piece.classList.add("piece")
-                    piece.setAttribute("data-x", x)
-                    piece.setAttribute("data-y", y)
-                    piece.setAttribute("data-color", this.getPiece(x, y).getColor())
+                    let piece = this.getPiece(x, y)
+                    let element = piece.render(x, y)
+                    this.addListeners(piece, element)
 
-                    this.addListeners(this.getPiece(x, y), piece)
-
-                    square.appendChild(piece)
+                    square.classList.add(piece.getColor())
+                    square.appendChild(element)
                 }
                 row.appendChild(square)
             }

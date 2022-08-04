@@ -8,6 +8,7 @@
     --piece-border-w: rgb(190, 190, 190);
     --piece-b: rgb(30, 30, 30);
     --piece-border-b: rgb(70, 70, 70);
+    --piece-kill: rgb(230, 0, 0);
     
     /* Move colors */
     --move-border-move: rgb(0, 230, 0);

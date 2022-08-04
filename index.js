@@ -1,6 +1,6 @@
 import {Game} from './Game.js'
 
 // MAIN
-(function () {
-    let game = new Game()
-})()
+// (function () {
+export let game = new Game()
+// })()

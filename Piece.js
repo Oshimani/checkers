@@ -23,4 +23,14 @@ export class Piece {
             ]
         }
     }
+
+    render(x, y) {
+        let element = document.createElement("div")
+        element.classList.add("piece")
+        element.setAttribute("data-x", x)
+        element.setAttribute("data-y", y)
+        element.setAttribute("data-color", this.getColor())
+        element.setAttribute("draggable", "true")
+        return element
+    }
 }
