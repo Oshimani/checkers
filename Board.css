@@ -45,6 +45,14 @@
     cursor: pointer;
 }
 
+#board.w .square.b .piece {
+    cursor: not-allowed;
+}
+
+#board.b .square.w .piece {
+    cursor: not-allowed;
+}
+
 .square.w div.piece {
     background-color: var(--piece-w);
     border-color: var(--piece-border-w);

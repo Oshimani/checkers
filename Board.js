@@ -142,7 +142,6 @@ export class Board {
             // handle drop
             square.addEventListener("drop", (e) => {
                 e.preventDefault()
-                console.log("DROP EVENT");
                 // remove highlighting of viable moves
                 document.querySelectorAll("#board .valid-move")
                     .forEach(square => {
@@ -169,19 +168,19 @@ export class Board {
         if (move.type === "kill") {
             this.setPiece(move.killAt.x, move.killAt.y, null)
         }
-        this.render()
         game.endTurn()
+        this.render()
     }
 
     addListeners(piece, element) {
 
+        if (game.currentPlayer.getColor() !== piece.getColor()) return
         let pos = {
             x: Number(element.getAttribute('data-x')),
             y: Number(element.getAttribute('data-y'))
         }
 
         element.addEventListener("pointerdown", () => {
-            console.log("My color is: " + piece.getColor())
             this.showValidMoves(pos.x, pos.y, piece)
         })
         element.addEventListener("dragstart", (e) => {

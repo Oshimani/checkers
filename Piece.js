@@ -1,3 +1,5 @@
+import { game } from "./index.js"
+
 export class Piece {
 
     color = ""
@@ -30,7 +32,8 @@ export class Piece {
         element.setAttribute("data-x", x)
         element.setAttribute("data-y", y)
         element.setAttribute("data-color", this.getColor())
-        element.setAttribute("draggable", "true")
+        if (game.currentPlayer.getColor() === this.getColor())
+            element.setAttribute("draggable", "true")
         return element
     }
 }
